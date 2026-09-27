@@ -1,0 +1,4 @@
+company,year,electricity_kwh,diesel_liters,natural_gas_m3,business_travel_km,employee_commute_km,waste_kg,revenue_million_usd,employees
+Test Company A,2025,50000,1000,2000,5000,8000,12000,10,100
+Test Company B,2025,-5000,800,1500,4000,7000,10000,8,80
+Test Company C,1800,45000,900,1800,3500,6000,9000,7,70

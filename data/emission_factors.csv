@@ -1,0 +1,7 @@
+activity,emission_factor,unit,scope
+diesel,2.68,kgCO2e/L,Scope 1
+natural_gas,2.00,kgCO2e/m3,Scope 1
+electricity,0.70,kgCO2e/kWh,Scope 2
+business_travel,0.18,kgCO2e/km,Scope 3
+employee_commute,0.12,kgCO2e/km,Scope 3
+waste,0.50,kgCO2e/kg,Scope 3

@@ -362,7 +362,7 @@ company_col1, company_col2 = st.columns([1, 1.5])
 with company_col1:
     st.dataframe(
         company_data,
-        use_container_width=True,
+        width="stretch",
         hide_index=True
     )
 
@@ -390,7 +390,7 @@ with trend_col1:
 with trend_col2:
     st.dataframe(
         year_data,
-        use_container_width=True,
+        width="stretch",
         hide_index=True
     )
 
@@ -412,7 +412,7 @@ with scope_col1:
 with scope_col2:
     st.dataframe(
         scope_data,
-        use_container_width=True,
+        width="stretch",
         hide_index=True
     )
 
@@ -435,7 +435,7 @@ with source_col1:
 with source_col2:
     st.dataframe(
         source_data,
-        use_container_width=True,
+        width="stretch",
         hide_index=True
     )
 
@@ -474,7 +474,7 @@ with intensity_col2:
 
 st.dataframe(
     intensity_data,
-    use_container_width=True,
+    width="stretch",
     hide_index=True
 )
 

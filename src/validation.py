@@ -61,7 +61,11 @@ def validate_activity_data(df):
     results["missing_columns"] = missing_columns
 
     # Check missing values
-    missing_values = df[REQUIRED_COLUMNS].isnull().sum()
+    available_required_columns = [
+        column for column in REQUIRED_COLUMNS
+        if column in df.columns
+    ]
+    missing_values = df[available_required_columns].isnull().sum()
 
     results["missing_values"] = {
         column: int(count)

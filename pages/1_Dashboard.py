@@ -1,4 +1,5 @@
 import sys
+import io
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
@@ -63,6 +64,60 @@ uploaded_file = st.sidebar.file_uploader(
     help="Upload a CSV or Excel file containing ESG activity data."
 )
 
+st.sidebar.caption(
+    "Your file should contain company, year, activity data, "
+    "revenue and employee columns."
+)
+
+with st.sidebar.expander("📋 Required Columns"):
+
+    st.write(
+        """
+        Your uploaded file should contain:
+
+        - `company`
+        - `year`
+        - `electricity_kwh`
+        - `diesel_liters`
+        - `natural_gas_m3`
+        - `business_travel_km`
+        - `employee_commute_km`
+        - `waste_kg`
+        - `revenue_million_usd`
+        - `employees`
+        """
+    )
+
+template_df = pd.DataFrame(
+    columns=[
+        "company",
+        "year",
+        "electricity_kwh",
+        "diesel_liters",
+        "natural_gas_m3",
+        "business_travel_km",
+        "employee_commute_km",
+        "waste_kg",
+        "revenue_million_usd",
+        "employees"
+    ]
+)
+
+template_buffer = io.BytesIO()
+
+template_df.to_excel(
+    template_buffer,
+    index=False,
+    engine="openpyxl"
+)
+
+st.sidebar.download_button(
+    label="⬇️ Download Excel Template",
+    data=template_buffer.getvalue(),
+    file_name="esg_activity_data_template.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+)
+
 if uploaded_file is not None:
 
     if uploaded_file.name.endswith(".csv"):
@@ -76,6 +131,55 @@ else:
 
 # Validate activity data
 validation_results = validate_activity_data(df)
+
+has_errors = (
+    validation_results["missing_columns"]
+    or validation_results["missing_values"]
+    or validation_results["invalid_numeric_columns"]
+    or validation_results["negative_values"]
+    or validation_results["invalid_years"]
+)
+
+if has_errors:
+    st.error(
+        "The uploaded data contains validation errors. "
+        "Please fix the issues before analysis can continue."
+    )
+
+    with st.expander("View Validation Details", expanded=True):
+
+        if validation_results["missing_columns"]:
+            st.write(
+                "**Missing Columns:**",
+                validation_results["missing_columns"]
+            )
+
+        if validation_results["missing_values"]:
+            st.write(
+                "**Missing Values:**",
+                validation_results["missing_values"]
+            )
+
+        if validation_results["invalid_numeric_columns"]:
+            st.write(
+                "**Invalid Numeric Columns:**",
+                validation_results["invalid_numeric_columns"]
+            )
+
+        if validation_results["negative_values"]:
+            st.write(
+                "**Negative Activity Values:**",
+                validation_results["negative_values"]
+            )
+
+        if validation_results["invalid_years"]:
+            st.write(
+                "**Invalid Years:**",
+                validation_results["invalid_years"]
+            )
+
+    st.stop()
+
 
 # Load emission factors
 factors_df = load_emission_factors(
@@ -482,4 +586,36 @@ with st.expander("ℹ️ Methodology"):
         illustrative for educational purposes.
         """
     )
-    
+
+    st.divider()
+
+st.subheader("📥 Download Results")
+
+st.caption(
+    "Download the calculated emissions data based on the "
+    "currently selected filters."
+)
+
+csv_data = filtered_df.to_csv(index=False)
+
+st.download_button(
+    label="⬇️ Download CSV",
+    data=csv_data,
+    file_name="esg_emissions_results.csv",
+    mime="text/csv"
+)
+
+excel_buffer = io.BytesIO()
+
+filtered_df.to_excel(
+    excel_buffer,
+    index=False,
+    engine="openpyxl"
+)
+
+st.download_button(
+    label="⬇️ Download Excel",
+    data=excel_buffer.getvalue(),
+    file_name="esg_emissions_results.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+)
